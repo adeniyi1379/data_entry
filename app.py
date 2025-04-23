@@ -147,4 +147,4 @@ def submit_data(n_clicks, phone_name, service, name, amount, status):
 register_callbacks(app)
 #run app
 if __name__ == '__main__':
-    app.run(debug=True, port=8050)
+    app.run_server(host="0.0.0.0", port=8080)
