@@ -1,6 +1,5 @@
 from dash import html, dcc, Input, Output, callback_context
 import data_entry_style as style
-import data_entry_style as style
 import pandas as pd
 from components.records import records_layout
 from components.transaction_layout import transaction_layout

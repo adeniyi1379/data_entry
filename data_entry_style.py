@@ -108,7 +108,7 @@ login_button_style= {
 message_style = {
     "marginTop": "20px",
     "textAlign": "center",
-    "color": "red",
+    "color": "#005120",
     "fontWeight": "bold",
 }
 

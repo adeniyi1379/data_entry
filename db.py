@@ -75,12 +75,12 @@ def add_user(conn, username, password, role):
         print(f"Error adding user: {e}")
 
 # Initialize the database connection
-# conn = sqlite3.connect("users.db", timeout=10, check_same_thread=False)
+conn = sqlite3.connect("users.db", timeout=10, check_same_thread=False)
 
 # Add users only if they don't already exist
 # add_user(conn, "adeniyi", generate_password_hash("1379"), "admin")
 # add_user(conn, "kelvin", generate_password_hash("1111"), "admin")
-
+# add_user(conn, "user1", generate_password_hash("1234"), "user")
 # Close the connection after initialization
 # conn.close()
 

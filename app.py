@@ -72,7 +72,12 @@ def login(n_clicks, username, password):
             print(f"Username: {username}")
             print(f"Password: {password}")
             print(f"Stored Password (hashed): {user['password']}")
-            return [tabs_layout], ""
+            if user["role"] == "admin":
+                # If the user is an admin, show the admin layout
+                return [tabs_layout], ""
+            else:
+                return [html.H2("Record a new Sales",style={"color":"#125155",}),
+                        transaction_layout], ""
         else:
             return login_layout, 'Invalid credentials. Please try again.'
     return login_layout, ''
@@ -82,17 +87,17 @@ db_lock = Lock()
 # callback for data sunmission
 @app.callback(
     [
-        Output('submission-message', 'children'),
-        Output('phone-names', 'value'),
+        Output('submission_message', 'children'),
+        Output('phone_names', 'value'),
         Output('services', 'value'),
-        Output('name', 'value'),
+        Output('client_name', 'value'),
         Output('amount', 'value'),
         Output('status', 'value')
     ],
     Input('submit-button', 'n_clicks'),
-    State('phone-names', 'value'),
+    State('phone_names', 'value'),
     State('services', 'value'),
-    State('name', 'value'),
+    State('client_name', 'value'),
     State('amount', 'value'),
     State('status', 'value'),
     prevent_initial_call=True
@@ -147,4 +152,4 @@ def submit_data(n_clicks, phone_name, service, name, amount, status):
 register_callbacks(app)
 #run app
 if __name__ == '__main__':
-    app.run_server(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8080)
