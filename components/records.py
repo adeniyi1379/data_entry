@@ -64,7 +64,7 @@ def records_layout(paid=None):
     """
     data = fetch_records(paid=paid)
     df = pd.DataFrame(data)  # Convert data to a DataFrame for easier manipulation
-
+    df.columns.rename({"phone_name": "Phone Name", "service": "Service", "name": "Client Name", "amount": "Amount", "status": "Status"}, inplace=True)
     # Create a list of rows for the table
     table_rows = []
     for _, row in df.iterrows():
