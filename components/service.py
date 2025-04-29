@@ -28,8 +28,8 @@ def service_layout():
         [
             html.H2("Available Services", style={"textAlign": "center", "marginBottom": "20px"}),
             html.Ul(
-                [html.Li(service, style={"marginBottom": "10px", "color": "rgb(232,37,97)"}) for service in services],
-                style={"padding": "20px", "backgroundColor": "rgb(232,231,171)", "borderRadius": "5px"}
+                [html.Li(service, style={"marginRight": "10px", "color": "rgb(232,37,97)"}) for service in services],
+                style={"padding": "20px", "backgroundColor": "rgb(232,231,171)", "borderRadius": "5px" , "display":"flex", "flexDirection": "column", "alignItems": "center"},
             ),
             html.Div(
                 [
@@ -55,7 +55,7 @@ def service_layout():
 # Callback to handle adding a new service
 def register_service_callbacks(app):
     @app.callback(
-        [Output("service-message", "children"), Output("tabs-content", "children")],
+        [Output("service-message", "children",allow_duplicate=True), Output("tabs-content", "children")],
         Input("add-service-button", "n_clicks"),
         State("new-service-input", "value"),
         prevent_initial_call=True,
@@ -63,9 +63,12 @@ def register_service_callbacks(app):
     def add_service(n_clicks, new_service):
         if not new_service:
             return "Please enter a service name.", service_layout()
+        if str.lower(new_service) in load_services():
+            return f"Service '{new_service}' already exists.", service_layout()
 
         # Append the new service to the CSV file
         append_service(new_service)
 
         # Reload the services and update the layout
         return f"Service '{new_service}' added successfully!", service_layout()
+    

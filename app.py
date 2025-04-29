@@ -8,12 +8,15 @@ import sqlite3
 from werkzeug.security import check_password_hash
 from sqlalchemy.orm import sessionmaker
 from threading import Lock
+import dash_bootstrap_components as dbc
 
 # import defined modules
 import data_entry_style as style
 from db import get_db_connection, get_db_connection_with_sqlachemy, Record
 from components.nav_layout import  tabs_layout,register_callbacks
 from components.transaction_layout import transaction_layout
+from components.service import register_service_callbacks
+from components.records import records_layout,register_record_callbacks
 
 
 #initialize the Flask server
@@ -21,8 +24,7 @@ server = Flask(__name__)
 server.secret_key = os.urandom(24)  # Set a secret key for session management
 
 #initialize the Dash app
-app = Dash(__name__, server=server, url_base_pathname='/',suppress_callback_exceptions=True)
-
+app = Dash(__name__, server=server, url_base_pathname='/',suppress_callback_exceptions=True,external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP])
 #Phoen names and services
 phone_name = pd.read_csv("phone_name.csv")
 services = pd.read_csv("services.csv")
@@ -50,7 +52,8 @@ app.layout = html.Div(
             ],
             style=style.main_container_style,  # Flexbox container
         ),
-    ]
+    ],
+    style={'backgroundColor': 'rgb(232,231,171)'} 
 )
 #callback for login
 @app.callback(
@@ -68,18 +71,15 @@ def login(n_clicks, username, password):
         if user and check_password_hash(user['password'], password):
             session['logged_in'] = True
             session['username'] = user["username"]
-            # session['role'] = user["role"]
-            print(f"Username: {username}")
-            print(f"Password: {password}")
-            print(f"Stored Password (hashed): {user['password']}")
             if user["role"] == "admin":
                 # If the user is an admin, show the admin layout
-                return [tabs_layout], ""
+                return [tabs_layout], "log in successful"
             else:
                 return [html.H2("Record a new Sales",style={"color":"#125155",}),
                         transaction_layout], ""
         else:
-            return login_layout, 'Invalid credentials. Please try again.'
+            return login_layout, [dbc.Alert([html.I(className="bi bi-exclamation-triangle-fill me-2"),"Invalid Credentials"], color="danger", dismissable=True, style= {"width":"50%"})]
+    # If the user is not logged in, show the login layout
     return login_layout, ''
 
 db_lock = Lock()
@@ -150,6 +150,8 @@ def submit_data(n_clicks, phone_name, service, name, amount, status):
 #     return app.index()
 
 register_callbacks(app)
+register_service_callbacks(app)
+# register_record_callbacks(app)
 #run app
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080)
+    app.run(debug=False)

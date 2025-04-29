@@ -19,7 +19,6 @@ logo_style={
 main_container_style = {
     'display': 'flex',
     'flexDirection': 'row',
-    'height': '90vh',
     "backgroundColor": "rgb(232,231,171)",  # Light yellow background
     "color": "rgb(232,37,97)",  # Pink font color
     'overflowX': 'hidden',  # Prevent horizontal scrolling
@@ -47,20 +46,19 @@ page_style = {
     "backgroundColor": "rgb(232,231,171)",
     "border": "1px solid #ddd",
     "borderRadius": "5px",
-    "boxShadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
 }
 
 # Input style
 input_style = {
-    "width": "70%",  # Full width for better alignment
-    "height": "40px",
+    "width": "48%",  # Full width for better alignment
+    "height": "50px",
     "padding": "10px",
-    "marginBottom": "10px",  # Add spacing between inputs
     "border": "1px solid rgb(232,37,97)",
     "backgroundColor": "rgb(232,231,171)",
     "color": "rgb(232,37,97)",
     "borderRadius": "5px",
-    "boxSizing": "border-box",  # Ensure padding doesn't affect width
+    "display":" block",
+     "margin": "0 auto",
 }
 nav_inner_button_style={
     "color": "rgb(232,231,171)",
@@ -70,38 +68,37 @@ nav_inner_button_style={
 dropdown_style = {
     "width": "70%",  # Full width for better alignment
     "padding": "10px", # Add spacing between dropdowns
-    "boxSizing": "border-box",  # Ensure padding doesn't affect width
     "backgroundColor": "rgb(232,231,171)",
     "color": "rgb(232,37,97)",
+    "margin": "0 auto",
     
 }
 
 # Button style
 button_style = {
-    "width": "100%",  # Full width for consistency
+    "width": "50%",  # Full width for consistency
     "padding": "10px",
     "color": "rgb(232,231,171)",  # Light yellow 
     "backgroundColor": "rgb(232,37,97)", 
     "border": "none",
     "borderRadius": "5px",
     "cursor": "pointer",
-    "marginTop": "20px",
     "textAlign": "center",
     "fontWeight": "bold",
     "fontSize": "26px",
+    "margin": "0 auto",
 }
 login_button_style= {
     "width": "70%",  # Full width for consistency
     "padding": "10px",
     "color": "rgb(232,231,171)",  # Light yellow 
     "backgroundColor": "rgb(232,37,97)",  # Pink font color # Light background color
-    "border": "none",
-    "borderRadius": "5px",
     "cursor": "pointer",
     "marginTop": "20px",
     "textAlign": "center",
     "fontWeight": "bold",
     "fontSize": "26px",
+    "border": "none",
 }
 
 # Message style
@@ -143,3 +140,6 @@ tabs_container_style = {
     "borderRadius": "5px",
     "boxShadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
 }
+tab_content_style = {
+    'overflowY': 'scroll',
+    }

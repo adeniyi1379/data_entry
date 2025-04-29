@@ -1,7 +1,10 @@
-from dash import html, dcc, Input, Output
+from dash import html, dcc, Input, Output, ALL, callback_context, State
+import dash
 from dash.dash_table import DataTable
 import data_entry_style as style
 from db import get_db_connection_with_sqlachemy, Record
+import dash_bootstrap_components as dbc
+import pandas as pd
 
 # Fetch transaction records from the database
 def fetch_records(paid=None):
@@ -45,64 +48,81 @@ def fetch_records(paid=None):
         ]
         return data
     finally:
-        session.remove()  # Clean up the session# Layout for the Records tab
+        session.remove()  # Clean up the session
 
 def records_layout(paid=None):
     """
     Generate the layout for the Records tab.
-    
+
     Args:
         paid (bool or None): If True, fetch only paid records.
                              If False, fetch only unpaid records.
                              If None, fetch all records.
-                             
+
     Returns:
         html.Div: The layout for the Records tab.
     """
     data = fetch_records(paid=paid)
-    columns = [
-        {"name": "Timestamp", "id": "timestamp"},
-        {"name": "Phone Name", "id": "phone_name"},
-        {"name": "Service", "id": "service"},
-        {"name": "Name", "id": "name"},
-        {"name": "Amount", "id": "amount"},
-        {"name": "Status", "id": "status"},
-    ]
-    table = DataTable(
-        id='records-table',
-        columns=columns,
-        data=data,
-        style_table={'overflowX': 'auto'},
-        style_cell={
-            'textAlign': 'left',
-            'padding': '10px',
-            'border': '1px solid #ddd',
-        },
-        style_header={
-            'backgroundColor': '#f4f4f4',
-            'fontWeight': 'bold',
-        },
-        page_size=10,
-    )
-    return html.Div(
-        [
-            html.H2("Transaction Records", style={"textAlign": "center", "marginBottom": "20px"}),
-            table,
-        ],
-        style={"padding": "20px"}
+    df = pd.DataFrame(data)  # Convert data to a DataFrame for easier manipulation
+
+    # Create a list of rows for the table
+    table_rows = []
+    for _, row in df.iterrows():
+        row_cells = [
+            html.Td(row[col]) for col in df.columns if col != "timestamp"
+        ]
+        if paid is False:
+            # Add a button to the row if paid is False
+            row_cells.append(
+                html.Td(
+                    html.Button(
+                        "Mark as Paid",
+                        id=str(row["id"]),  # Use a unique ID for each button
+                    )
+                )
+            )
+        table_rows.append(html.Tr(row_cells))
+
+    # Create the table
+    table_header = [html.Th(col) for col in df.columns if col != "timestamp"]
+    if paid is False:
+        table_header.append(html.Th("Action"))  # Add a header for the action column
+
+    table = dbc.Table(
+        [html.Thead(html.Tr(table_header)), html.Tbody(table_rows)],
+        striped=True,
+        hover=True,
+        responsive=True,
+        bordered=True,
+        style={"marginTop": "20px", "backgroundColor": "rgb(232,231,171)"},
     )
 
-# Tabs layout
-tabs_layout = html.Div([
-    html.H1("Welcome to the Dashboard"),
-    dcc.Tabs(id="main", value='transaction', children=[
-        dcc.Tab(label='Transaction', value='transaction'),
-        dcc.Tab(label='Service', value='service'),
-        dcc.Tab(label='Dashboard', value='dashboard'),
-        dcc.Tab(label='Records', value='records'),
-        dcc.Tab(label='Debt', value='debt'),
-        dcc.Tab(label='Logout', value='logout')
-    ]),
-    html.Div(id='tabs-content', style=style.page_style),
-])
+    return html.Div(table)
 
+# Callback to handle marking a record as paid
+def register_record_callbacks(app):
+    @app.callback(
+        Output("tabs-content", "children"),
+        Input("id", "n_clicks"),  # Listen for all buttons with this structure
+        prevent_initial_call=True,
+    )
+    def mark_as_paid(n_clicks, button_ids):
+        if not n_clicks or all(click is None for click in n_clicks):
+            raise dash.PreventUpdate
+
+        # Find the button that was clicked
+        for i, click in enumerate(n_clicks):
+            if click:
+                record_id = int(button_ids[i]["index"])  # Extract the record ID from the button ID
+                session = get_db_connection_with_sqlachemy()
+                try:
+                    # Update the record in the database
+                    record = session.query(Record).filter(Record.id == record_id).first()
+                    if record:
+                        record.status = "True"  # Mark as paid
+                        session.commit()
+                finally:
+                    session.remove()  # Clean up the session
+
+        # Refresh the layout
+        return records_layout(paid=False)

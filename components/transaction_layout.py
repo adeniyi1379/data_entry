@@ -3,7 +3,6 @@ import data_entry_style as style
 import pandas as pd
 phone_name = pd.read_csv("phone_name.csv")
 services = pd.read_csv("services.csv")
-print(phone_name)
 # Layout for the data entry page (Transaction)
 transaction_layout = html.Div(
     [
