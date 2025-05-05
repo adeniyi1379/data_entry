@@ -17,7 +17,8 @@ from components.nav_layout import  tabs_layout,register_callbacks
 from components.transaction_layout import transaction_layout
 from components.service import register_service_callbacks
 from components.records import records_layout,register_record_callbacks
-
+from components.login import login_layout
+from components.dashboard import register_dashboard_callbacks
 
 #initialize the Flask server
 server = Flask(__name__)
@@ -25,21 +26,10 @@ server.secret_key = os.urandom(24)  # Set a secret key for session management
 
 #initialize the Dash app
 app = Dash(__name__, server=server, url_base_pathname='/',suppress_callback_exceptions=True,external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP])
+app.title = "Data Entry App"
 #Phoen names and services
 phone_name = pd.read_csv("phone_name.csv")
 services = pd.read_csv("services.csv")
-
-#login page layout
-login_layout = html.Div([
-html.H2("Data entry form"),
-dcc.Input(id='username', type='text', placeholder='Username', style=style.input_style),
-dcc.Input(id='password', type='password', placeholder='Password', style=style.input_style),
-html.Button('Login', id='login-button',style=style.login_button_style),
-html.Div(id= "login-message")
-
-], style=style.container_style),
-
-
 
 #layout of the app
 app.layout = html.Div(
@@ -52,6 +42,7 @@ app.layout = html.Div(
             ],
             style=style.main_container_style,  # Flexbox container
         ),
+        
     ],
     style={'backgroundColor': 'rgb(232,231,171)'} 
 )
@@ -137,21 +128,10 @@ def submit_data(n_clicks, phone_name, service, name, amount, status):
             db_session.remove()  # Clean up the session
     return '', None, None, None, None, None
 
-# #URL Routing
-# @server.route('/')
-# def index():
-#     if session.get('logged_in'):
-#         return app.index()
-#     return redirect(url_for('login'))
-
-
-# @server.route('/login')
-# def login_page():
-#     return app.index()
-
 register_callbacks(app)
 register_service_callbacks(app)
-# register_record_callbacks(app)
+register_record_callbacks(app)
+register_dashboard_callbacks(app)
 #run app
 if __name__ == '__main__':
     app.run(debug=False)

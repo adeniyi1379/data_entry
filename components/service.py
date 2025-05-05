@@ -55,20 +55,21 @@ def service_layout():
 # Callback to handle adding a new service
 def register_service_callbacks(app):
     @app.callback(
-        [Output("service-message", "children",allow_duplicate=True), Output("tabs-content", "children")],
+        [Output("service-message", "children"), Output("services-store", "data")],
         Input("add-service-button", "n_clicks"),
         State("new-service-input", "value"),
+        State("services-store", "data"),
         prevent_initial_call=True,
     )
-    def add_service(n_clicks, new_service):
+    def add_service(n_clicks, new_service, current_services):
         if not new_service:
-            return "Please enter a service name.", service_layout()
-        if str.lower(new_service) in load_services():
-            return f"Service '{new_service}' already exists.", service_layout()
+            return "Please enter a service name.", current_services
+        if str.lower(new_service) in [str.lower(s) for s in current_services]:
+            return f"Service '{new_service}' already exists.", current_services
 
         # Append the new service to the CSV file
         append_service(new_service)
 
-        # Reload the services and update the layout
-        return f"Service '{new_service}' added successfully!", service_layout()
-    
+        # Update the services list
+        updated_services = current_services + [new_service]
+        return f"Service '{new_service}' added successfully!", updated_services

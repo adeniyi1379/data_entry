@@ -1,3 +1,5 @@
+background_color = "rgb(232,231,171)"  # Light yellow background
+font_color = "rgb(232,37,97)"  # Pink font color
 # Define style dictionaries
 container_style = {
     "width": "100%",
@@ -99,6 +101,7 @@ login_button_style= {
     "fontWeight": "bold",
     "fontSize": "26px",
     "border": "none",
+
 }
 
 # Message style
@@ -140,6 +143,12 @@ tabs_container_style = {
     "borderRadius": "5px",
     "boxShadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
 }
-tab_content_style = {
-    'overflowY': 'scroll',
-    }
+
+bar_chart ={ # Full width for better alignment
+    "height": "400px",
+    "margin": "10px",
+    "padding": "20px",
+    "borderRadius": "10px",
+    "boxShadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
+    "backgroundColor":'rgb(232,231,171)'
+}
